@@ -1,21 +1,18 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:doctor_name",
  "creation": "2026-04-28 18:42:12.653782",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "name1",
+  "doctor_name",
+  "area",
   "address",
-  "phone"
+  "phone",
+  "clinic_name"
  ],
  "fields": [
-  {
-   "fieldname": "name1",
-   "fieldtype": "Data",
-   "label": "Name",
-   "options": "Name"
-  },
   {
    "fieldname": "address",
    "fieldtype": "Small Text",
@@ -25,15 +22,36 @@
    "fieldname": "phone",
    "fieldtype": "Data",
    "label": "Phone"
+  },
+  {
+   "fieldname": "doctor_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Doctor Name",
+   "options": "Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "area",
+   "fieldtype": "Select",
+   "label": "Area",
+   "options": "Vasai E\nVasai W\nNalasopra E\nNalasopara W"
+  },
+  {
+   "fieldname": "clinic_name",
+   "fieldtype": "Data",
+   "label": "Clinic Name"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-28 19:09:05.194156",
+ "modified": "2026-04-28 21:27:12.762019",
  "modified_by": "Administrator",
  "module": "StepUp",
  "name": "Doctor",
+ "naming_rule": "By fieldname",
  "owner": "arshadrmultani@gmail.com",
  "permissions": [
   {
@@ -49,6 +67,7 @@
    "write": 1
   }
  ],
+ "quick_entry": 1,
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
  "sort_field": "creation",

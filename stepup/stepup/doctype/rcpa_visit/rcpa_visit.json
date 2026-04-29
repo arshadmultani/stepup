@@ -1,13 +1,18 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "autoincrement",
  "creation": "2026-04-28 19:15:22.075904",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "chemist",
   "date",
-  "doctor_entries"
+  "area",
+  "shop_type",
+  "substitution_happens",
+  "doctor_entries",
+  "notes"
  ],
  "fields": [
   {
@@ -17,6 +22,7 @@
    "options": "Chemist"
   },
   {
+   "default": "Today",
    "fieldname": "date",
    "fieldtype": "Date",
    "label": "Date"
@@ -25,16 +31,42 @@
    "fieldname": "doctor_entries",
    "fieldtype": "Table",
    "label": "Doctor Entries",
-   "options": "RCPA Doctor Row"
+   "options": "RCPA Doctor"
+  },
+  {
+   "fieldname": "area",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Area",
+   "options": "Area",
+   "reqd": 1
+  },
+  {
+   "fieldname": "shop_type",
+   "fieldtype": "Select",
+   "label": "Shop Type",
+   "options": "Doctor driven\nRetail\nMixed"
+  },
+  {
+   "default": "0",
+   "fieldname": "substitution_happens",
+   "fieldtype": "Check",
+   "label": "Substitution Happens?"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-04-28 19:17:34.063312",
+ "modified": "2026-04-29 19:45:30.356319",
  "modified_by": "Administrator",
  "module": "StepUp",
  "name": "RCPA Visit",
+ "naming_rule": "Autoincrement",
  "owner": "Administrator",
  "permissions": [
   {

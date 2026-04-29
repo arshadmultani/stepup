@@ -1,40 +1,50 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:chemist_name",
  "creation": "2026-04-28 18:50:02.183467",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "name1",
-  "select_zctt",
+  "chemist_name",
+  "area",
   "address"
  ],
  "fields": [
   {
-   "fieldname": "name1",
-   "fieldtype": "Data",
-   "label": "Name",
-   "options": "Name"
-  },
-  {
-   "fieldname": "select_zctt",
-   "fieldtype": "Select",
-   "label": "Area",
-   "options": "Vasai E\nVasai W\nNalasopara E\nNalasopara W"
-  },
-  {
    "fieldname": "address",
    "fieldtype": "Small Text",
    "label": "Address"
+  },
+  {
+   "fieldname": "chemist_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name",
+   "options": "Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "area",
+   "fieldtype": "Link",
+   "label": "Area",
+   "options": "Area"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2026-04-28 19:12:16.888212",
+ "links": [
+  {
+   "link_doctype": "RCPA Visit",
+   "link_fieldname": "chemist"
+  }
+ ],
+ "modified": "2026-04-29 20:00:38.988361",
  "modified_by": "Administrator",
  "module": "StepUp",
  "name": "Chemist",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -50,6 +60,7 @@
    "write": 1
   }
  ],
+ "quick_entry": 1,
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
  "sort_field": "creation",

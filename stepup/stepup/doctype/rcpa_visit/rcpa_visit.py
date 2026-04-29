@@ -13,11 +13,16 @@ class RCPAVisit(Document):
 
 	if TYPE_CHECKING:
 		from frappe.types import DF
-		from stepup.stepup.doctype.rcpa_doctor_row.rcpa_doctor_row import RCPADoctorRow
+		from stepup.stepup.doctype.rcpa_doctor.rcpa_doctor import RCPADoctor
 
+		area: DF.Link
 		chemist: DF.Link | None
 		date: DF.Date | None
-		doctor_entries: DF.Table[RCPADoctorRow]
+		doctor_entries: DF.Table[RCPADoctor]
+		name: DF.Int | None
+		notes: DF.SmallText | None
+		shop_type: DF.Literal["Doctor driven", "Retail", "Mixed"]
+		substitution_happens: DF.Check
 	# end: auto-generated types
 
 	pass

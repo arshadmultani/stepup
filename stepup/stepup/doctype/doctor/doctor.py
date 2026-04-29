@@ -15,7 +15,9 @@ class Doctor(Document):
 		from frappe.types import DF
 
 		address: DF.SmallText | None
-		name1: DF.Data | None
+		area: DF.Literal["Vasai E", "Vasai W", "Nalasopra E", "Nalasopara W"]
+		clinic_name: DF.Data | None
+		doctor_name: DF.Data
 		phone: DF.Data | None
 	# end: auto-generated types
 

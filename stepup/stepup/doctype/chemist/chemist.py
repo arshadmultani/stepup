@@ -15,8 +15,8 @@ class Chemist(Document):
 		from frappe.types import DF
 
 		address: DF.SmallText | None
-		name1: DF.Data | None
-		select_zctt: DF.Literal["Vasai E", "Vasai W", "Nalasopara E", "Nalasopara W"]
+		area: DF.Link | None
+		chemist_name: DF.Data
 	# end: auto-generated types
 
 	pass
