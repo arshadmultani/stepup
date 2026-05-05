@@ -6,12 +6,20 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "information_section",
   "doctor_name",
-  "area",
-  "address",
   "phone",
+  "address",
+  "column_break_vzyr",
+  "area",
   "clinic_name",
-  "geolocation_wwwy"
+  "location_section",
+  "coordinates",
+  "longitude",
+  "column_break_rkwc",
+  "latitude",
+  "map_section",
+  "geolocation"
  ],
  "fields": [
   {
@@ -45,19 +53,64 @@
    "label": "Clinic Name"
   },
   {
-   "fieldname": "geolocation_wwwy",
-   "fieldtype": "Geolocation"
+   "fieldname": "information_section",
+   "fieldtype": "Section Break",
+   "label": "Information"
+  },
+  {
+   "fieldname": "column_break_vzyr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Longitude",
+   "precision": "7",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_rkwc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Latitude",
+   "precision": "7",
+   "read_only": 1
+  },
+  {
+   "fieldname": "map_section",
+   "fieldtype": "Section Break",
+   "label": "Map"
+  },
+  {
+   "fieldname": "geolocation",
+   "fieldtype": "Geolocation",
+   "label": "Map"
+  },
+  {
+   "fieldname": "coordinates",
+   "fieldtype": "Data",
+   "label": "coordinates"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [
   {
-   "link_doctype": "RCPA Visit",
-   "link_fieldname": "doctor_entries.doctor"
+   "link_doctype": "RCPA Doctor",
+   "link_fieldname": "doctor"
   }
  ],
- "modified": "2026-04-29 20:24:40.357080",
+ "modified": "2026-05-05 20:03:58.796895",
  "modified_by": "Administrator",
  "module": "StepUp",
  "name": "Doctor",

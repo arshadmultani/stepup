@@ -29,6 +29,8 @@
   {
    "fieldname": "remarks",
    "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Remarks"
   }
  ],
@@ -36,7 +38,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-04-28 20:22:38.632810",
+ "modified": "2026-05-05 20:11:48.312836",
  "modified_by": "Administrator",
  "module": "StepUp",
  "name": "RCPA Doctor",
