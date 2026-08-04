@@ -5,6 +5,24 @@ app_description = "Sales and Marketing management for Pharma companies bs"
 app_email = "info@exponit.com"
 app_license = "agpl-3.0"
 
+
+fixtures = [
+    {
+        "doctype": "Custom Field",
+        "filters": [["module","=","StepUp"]]
+    },
+    {
+        "doctype": "Print Format",
+        "filters": [["name", "in", ["StepUp Sales Invoice"]]]
+    },
+    
+]
+
+doc_events = {
+    "Sales Invoice": {
+        "before_save": "stepup.stepup.utils.upi_qr.generate_upi_qr"
+    }
+}
 # Apps
 # ------------------
 
@@ -77,10 +95,15 @@ app_license = "agpl-3.0"
 # ----------
 
 # add methods and filters to jinja environment
-# jinja = {
-# 	"methods": "stepup.utils.jinja_methods",
-# 	"filters": "stepup.utils.jinja_filters"
-# }
+jinja = {
+	"methods": [
+		"stepup.stepup.utils.upi_qr.get_upi_qr_data_url",
+		"stepup.stepup.utils.upi_qr.get_batch_expiry",
+		"stepup.stepup.utils.upi_qr.get_item_tax_breakdown",
+		"stepup.stepup.utils.upi_qr.get_gst_summary",
+		"stepup.stepup.utils.upi_qr.get_company_bank_details"
+	]
+}
 
 # Installation
 # ------------

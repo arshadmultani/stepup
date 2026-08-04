@@ -42,10 +42,12 @@
    "unique": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "area",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Area",
-   "options": "Vasai E\nVasai W\nNalasopra E\nNalasopara W"
+   "options": "Area",
+   "reqd": 1
   },
   {
    "fieldname": "clinic_name",
@@ -110,7 +112,7 @@
    "link_fieldname": "doctor"
   }
  ],
- "modified": "2026-05-05 20:03:58.796895",
+ "modified": "2026-05-07 21:50:04.203986",
  "modified_by": "Administrator",
  "module": "StepUp",
  "name": "Doctor",

@@ -16,7 +16,7 @@ class Doctor(Document):
 		from frappe.types import DF
 
 		address: DF.SmallText | None
-		area: DF.Literal["Vasai E", "Vasai W", "Nalasopra E", "Nalasopara W"]
+		area: DF.Link
 		clinic_name: DF.Data | None
 		coordinates: DF.Data | None
 		doctor_name: DF.Data
