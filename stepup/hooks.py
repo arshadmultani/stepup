@@ -20,7 +20,8 @@ fixtures = [
 
 doc_events = {
     "Sales Invoice": {
-        "before_save": "stepup.stepup.utils.upi_qr.generate_upi_qr"
+        "before_save": "stepup.stepup.utils.upi_qr.generate_upi_qr",
+        "on_submit": "stepup.stepup.utils.telegram.send_sales_invoice_to_telegram"
     }
 }
 # Apps

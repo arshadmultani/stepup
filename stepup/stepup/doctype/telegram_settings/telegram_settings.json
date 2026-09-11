@@ -1,0 +1,123 @@
+{
+ "actions": [],
+ "creation": "2026-09-11 11:30:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "bot_credentials_section",
+  "bot_token",
+  "chat_id",
+  "message_thread_id",
+  "column_break_test",
+  "send_test_btn",
+  "invoice_settings_section",
+  "attach_pdf",
+  "print_format",
+  "letter_head"
+ ],
+ "fields": [
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enable Telegram Notifications"
+  },
+  {
+   "fieldname": "bot_credentials_section",
+   "fieldtype": "Section Break",
+   "label": "Telegram Bot Credentials"
+  },
+  {
+   "description": "Telegram Bot Token from @BotFather (e.g. 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ)",
+   "fieldname": "bot_token",
+   "fieldtype": "Password",
+   "label": "Bot Token"
+  },
+  {
+   "description": "Chat ID or Channel Username (e.g. -1001234567890 or @your_channel). Note: Bot must be an administrator in channels.",
+   "fieldname": "chat_id",
+   "fieldtype": "Data",
+   "label": "Chat ID / Channel ID"
+  },
+  {
+   "description": "Optional Topic ID for forum supergroups (e.g. 2, 45). Leave blank to send to General/main chat.",
+   "fieldname": "message_thread_id",
+   "fieldtype": "Data",
+   "label": "Topic ID (Optional)"
+  },
+  {
+   "fieldname": "column_break_test",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Click to verify your Bot Token and Chat ID",
+   "fieldname": "send_test_btn",
+   "fieldtype": "Button",
+   "label": "Send Test Message"
+  },
+  {
+   "fieldname": "invoice_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Sales Invoice Settings"
+  },
+  {
+   "default": "1",
+   "description": "Send the invoice as a PDF attachment with details in caption",
+   "fieldname": "attach_pdf",
+   "fieldtype": "Check",
+   "label": "Attach Invoice PDF"
+  },
+  {
+   "description": "Leave blank to use 'StepUp Sales Invoice' or standard format",
+   "fieldname": "print_format",
+   "fieldtype": "Link",
+   "label": "Print Format",
+   "options": "Print Format"
+  },
+  {
+   "description": "Optional letter head for the PDF",
+   "fieldname": "letter_head",
+   "fieldtype": "Link",
+   "label": "Letter Head",
+   "options": "Letter Head"
+  }
+ ],
+ "icon": "fa fa-paper-plane",
+ "idx": 1,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-09-11 11:30:00.000000",
+ "modified_by": "Administrator",
+ "module": "StepUp",
+ "name": "Telegram Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
