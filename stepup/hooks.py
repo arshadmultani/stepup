@@ -13,7 +13,7 @@ fixtures = [
     },
     {
         "doctype": "Print Format",
-        "filters": [["name", "in", ["StepUp Sales Invoice"]]]
+        "filters": [["name", "in", ["StepUp Sales Invoice", "Pharma Distribution Invoice"]]]
     },
     
 ]
@@ -102,7 +102,14 @@ jinja = {
 		"stepup.stepup.utils.upi_qr.get_batch_expiry",
 		"stepup.stepup.utils.upi_qr.get_item_tax_breakdown",
 		"stepup.stepup.utils.upi_qr.get_gst_summary",
-		"stepup.stepup.utils.upi_qr.get_company_bank_details"
+		"stepup.stepup.utils.upi_qr.get_company_bank_details",
+		"stepup.stepup.utils.pharma_invoice.get_pharma_invoice_items",
+		"stepup.stepup.utils.pharma_invoice.get_pharma_totals",
+		"stepup.stepup.utils.pharma_invoice.get_pharma_gst_summary",
+		"stepup.stepup.utils.pharma_invoice.get_barcode_svg_data_url",
+		"stepup.stepup.utils.pharma_invoice.get_company_pharma_info",
+		"stepup.stepup.utils.pharma_invoice.get_customer_pharma_info",
+		"stepup.stepup.utils.pharma_invoice.get_pharma_bank_details"
 	]
 }
 
@@ -167,23 +174,11 @@ jinja = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"stepup.tasks.all"
-# 	],
-# 	"daily": [
-# 		"stepup.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"stepup.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"stepup.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"stepup.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"daily": [
+		"stepup.stepup.utils.discord_backup.scheduled_backup"
+	],
+}
 
 # Testing
 # -------

@@ -1,0 +1,120 @@
+{
+ "actions": [],
+ "creation": "2026-10-31 22:50:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "webhook_section",
+  "webhook_url",
+  "col_break_actions",
+  "test_webhook_btn",
+  "backup_now_btn",
+  "backup_options_section",
+  "send_database",
+  "send_config",
+  "send_files",
+  "cron_section",
+  "cron_instructions"
+ ],
+ "fields": [
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enable Discord Backups"
+  },
+  {
+   "fieldname": "webhook_section",
+   "fieldtype": "Section Break",
+   "label": "Discord Webhook Configuration"
+  },
+  {
+   "default": "https://discord.com/api/webhooks/1508133384713670659/PHryn1cIKSyqDCBtCAMqmMYrWavsQyCidyuTK7pMDmC4Bmp_CeW1CxPJdjxbDG4GHtGJ",
+   "description": "Discord channel incoming webhook URL",
+   "fieldname": "webhook_url",
+   "fieldtype": "Password",
+   "label": "Webhook URL",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_actions",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Send a lightweight test message to Discord to verify the webhook",
+   "fieldname": "test_webhook_btn",
+   "fieldtype": "Button",
+   "label": "Test Webhook Connection"
+  },
+  {
+   "description": "Immediately trigger a site backup and dispatch to Discord",
+   "fieldname": "backup_now_btn",
+   "fieldtype": "Button",
+   "label": "Backup & Send Now"
+  },
+  {
+   "fieldname": "backup_options_section",
+   "fieldtype": "Section Break",
+   "label": "Backup Options"
+  },
+  {
+   "default": "1",
+   "description": "Compress and attach database SQL dump (*.sql.gz) if <= 25MB",
+   "fieldname": "send_database",
+   "fieldtype": "Check",
+   "label": "Attach Database Dump"
+  },
+  {
+   "default": "1",
+   "description": "Attach site_config_backup.json",
+   "fieldname": "send_config",
+   "fieldtype": "Check",
+   "label": "Attach Site Configuration"
+  },
+  {
+   "default": "0",
+   "description": "Attach public/private file archives (Caution: Discord limit is 25MB for free servers)",
+   "fieldname": "send_files",
+   "fieldtype": "Check",
+   "label": "Include Uploaded Files"
+  },
+  {
+   "fieldname": "cron_section",
+   "fieldtype": "Section Break",
+   "label": "Cron & Automation"
+  },
+  {
+   "fieldname": "cron_instructions",
+   "fieldtype": "HTML",
+   "label": "Cron Instructions",
+   "read_only": 1
+  }
+ ],
+ "icon": "fa fa-database",
+ "idx": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-10-31 22:50:00.000000",
+ "modified_by": "Administrator",
+ "module": "StepUp",
+ "name": "Discord Backup Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

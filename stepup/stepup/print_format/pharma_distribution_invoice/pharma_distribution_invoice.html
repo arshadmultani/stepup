@@ -1,0 +1,590 @@
+{% set items = get_pharma_invoice_items(doc) %}
+{% set totals = get_pharma_totals(doc, items) %}
+{% set gst = get_pharma_gst_summary(doc, items) %}
+{% set comp = get_company_pharma_info(doc) %}
+{% set cust = get_customer_pharma_info(doc) %}
+{% set bank = get_pharma_bank_details(doc) %}
+{% set barcode_url = get_barcode_svg_data_url(doc.name) %}
+{% set upi_url = doc.custom_upi_qr or ("upi://pay?pa=exponit@upi&pn=" ~ (doc.company | urlencode) ~ "&am=" ~ doc.grand_total ~ "&cu=INR&tn=Invoice%20" ~ doc.name) %}
+{% set qr_image_data = get_upi_qr_data_url(upi_url) %}
+
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 4mm 5mm;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+  }
+
+  .pharma-invoice-container {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000;
+    font-size: 7pt;
+    line-height: 1.2;
+    background: #fff;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    page-break-inside: avoid;
+  }
+
+  /* Top Meta Bar */
+  .top-meta-bar {
+    display: table;
+    width: 100%;
+    font-size: 7.2pt;
+    font-weight: bold;
+    padding-bottom: 2px;
+    margin-bottom: 2px;
+  }
+  .top-meta-left { display: table-cell; width: 33.3%; text-align: left; }
+  .top-meta-center { display: table-cell; width: 33.3%; text-align: center; }
+  .top-meta-right { display: table-cell; width: 33.3%; text-align: right; }
+
+  /* Header Box */
+  .header-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #000;
+    table-layout: fixed;
+    margin-bottom: 0px;
+  }
+
+  .header-table > tbody > tr > td {
+    border: 1px solid #000;
+    padding: 3px 4px;
+    vertical-align: top;
+  }
+
+  .company-title {
+    font-size: 10pt;
+    font-weight: 900;
+    letter-spacing: 0.3px;
+    color: #000;
+    margin-bottom: 2px;
+  }
+
+  .customer-title {
+    font-size: 9.5pt;
+    font-weight: 900;
+    color: #000;
+    margin-bottom: 1px;
+  }
+
+  .header-label {
+    font-weight: bold;
+    color: #000;
+  }
+
+  .barcode-img {
+    height: 20px;
+    max-width: 110px;
+    display: inline-block;
+  }
+
+  /* Items Table */
+  .items-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #000;
+    border-top: none;
+    table-layout: fixed;
+    margin-bottom: 0px;
+  }
+
+  .items-table th {
+    background-color: #f0f0f0;
+    color: #000;
+    font-weight: bold;
+    font-size: 5.8pt;
+    letter-spacing: -0.1px;
+    text-transform: uppercase;
+    border: 1px solid #000;
+    padding: 2px 1px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.1;
+    overflow: hidden;
+  }
+
+  .items-table td {
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    padding: 2px 1px;
+    font-size: 6.8pt;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: visible;
+  }
+
+  .items-table td.product-col {
+    white-space: normal;
+    font-size: 7.2pt;
+    word-break: break-word;
+    overflow: visible;
+    line-height: 1.15;
+  }
+
+  .items-table tbody tr.empty-row td {
+    border-top: none;
+    border-bottom: none;
+    height: 16px;
+  }
+
+  .items-table tbody tr:last-child td {
+    border-bottom: 1px solid #000;
+  }
+
+  /* Utilities */
+  .text-center { text-align: center !important; }
+  .text-left { text-align: left !important; }
+  .text-right { text-align: right !important; }
+  .font-bold { font-weight: bold !important; }
+
+  .scheme-val {
+    font-weight: 900;
+    color: #0b4594;
+    font-size: 7.5pt;
+  }
+
+  /* Banners */
+  .alert-banner {
+    width: 100%;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    padding: 1.5px 4px;
+    font-size: 6.8pt;
+    font-weight: bold;
+    background-color: #fff;
+    box-sizing: border-box;
+  }
+
+  .complaints-banner {
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #bbb;
+    text-align: center;
+  }
+
+  .message-banner {
+    border-bottom: 1px solid #000;
+    background-color: #fafafa;
+    display: table;
+    width: 100%;
+  }
+
+  .msg-label {
+    display: table-cell;
+    width: 55px;
+    font-weight: 900;
+    border-right: 1px solid #000;
+    padding-right: 4px;
+  }
+
+  .msg-content {
+    display: table-cell;
+    padding-left: 6px;
+    font-weight: bold;
+    letter-spacing: 0.3px;
+  }
+
+  /* Footer Table */
+  .footer-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #000;
+    border-top: none;
+    table-layout: fixed;
+  }
+
+  .footer-table > tbody > tr > td {
+    border: 1px solid #000;
+    padding: 2.5px 3.5px;
+    vertical-align: top;
+  }
+
+  /* GST Slab Table */
+  .gst-slab-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 6.2pt;
+    table-layout: fixed;
+  }
+
+  .gst-slab-table th, .gst-slab-table td {
+    border: 1px solid #888;
+    padding: 1px 1px;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .gst-slab-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .gst-slab-table tr.total-row td {
+    border-top: 1px solid #000;
+    font-weight: bold;
+    background-color: #f0f0f0;
+  }
+
+  /* Totals Grid */
+  .totals-grid {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7.2pt;
+    table-layout: fixed;
+  }
+
+  .totals-grid td {
+    border: none;
+    padding: 1px 1px;
+    white-space: nowrap;
+  }
+
+  .to-pay-row {
+    border-top: 1px solid #000 !important;
+    border-bottom: 1px solid #000 !important;
+    font-size: 9.5pt !important;
+    font-weight: 900 !important;
+  }
+
+  .signatory-box {
+    text-align: center;
+  }
+
+  .signatory-space {
+    height: 25px;
+  }
+
+  .qr-box {
+    text-align: center;
+  }
+
+  .qr-box img {
+    width: 52px;
+    height: 52px;
+    border: 1px solid #555;
+    padding: 1px;
+    background: #fff;
+  }
+</style>
+
+<div class="pharma-invoice-container">
+
+  <!-- Top bar -->
+  <div class="top-meta-bar">
+    <div class="top-meta-left">E2,C2,C4,D1,D3,F3,G2</div>
+    <div class="top-meta-center">Copy No: 01</div>
+    <div class="top-meta-right">{% if doc.custom_invoice_copy %}{{ doc.custom_invoice_copy | upper }}{% else %}CUSTOMER COPY{% endif %}</div>
+  </div>
+
+  <!-- Header Table -->
+  <table class="header-table">
+    <tr>
+      <!-- Left Box: Distributor Details -->
+      <td style="width: 50%;">
+        <div class="company-title">{{ comp.name }}</div>
+        <div style="font-size: 7.2pt; line-height: 1.25;">
+          {{ comp.address_line1 }}{% if comp.address_line2 %}, {{ comp.address_line2 }}{% endif %}<br>
+          {{ comp.city }} - {{ comp.pincode }}<br>
+          <span class="header-label">Ph.No. &nbsp; &nbsp; &nbsp; &nbsp; :</span> {{ comp.phone }}<br>
+          <span class="header-label">CIN &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; :</span> {{ comp.cin }}<br>
+          <span class="header-label">GSTIN. &nbsp; &nbsp; &nbsp; :</span> {{ comp.gstin }} &nbsp; &nbsp; <span class="header-label">STATE :</span> {{ comp.state_code }}<br>
+          <span class="header-label">DL NO. &nbsp; &nbsp; &nbsp; :</span> {{ comp.dl_no }}<br>
+          <span class="header-label">Food Lic. &nbsp; :</span> {{ comp.food_lic }} &nbsp; &nbsp; <span class="header-label">PAN:</span> {{ comp.pan }}<br>
+          <span class="header-label">Mail id &nbsp; &nbsp; &nbsp; :</span> {{ comp.email }}
+        </div>
+      </td>
+
+      <!-- Right Box: Invoice & Customer Details -->
+      <td style="width: 50%;">
+        <table style="width: 100%; border: none; border-collapse: collapse;">
+          <tr>
+            <td style="border: none; padding: 0; vertical-align: top;">
+              <span style="font-size: 8.8pt; font-weight: 900;">GST INVOICE : {{ doc.name }}</span><br>
+              <span class="header-label">Inv. Date :</span> {{ cust.inv_date }}<br>
+              <span class="header-label">Party Code:</span> {{ cust.party_code }}
+            </td>
+            <td style="border: none; padding: 0; text-align: right; vertical-align: top;">
+              {% if barcode_url %}
+                <img src="{{ barcode_url }}" class="barcode-img" alt="Barcode"><br>
+                <span style="font-size: 6.2pt; letter-spacing: 0.5px; font-family: monospace;">*{{ doc.name }}*</span>
+              {% endif %}
+            </td>
+          </tr>
+        </table>
+
+        <!-- Customer Name & Address -->
+        <div style="margin-top: 2px;">
+          <div class="customer-title">{{ cust.customer_name }} $</div>
+          <div style="font-size: 7.2pt; line-height: 1.2;">
+            {{ cust.address_line1 }}{% if cust.address_line2 %}, {{ cust.address_line2 }}{% endif %}
+            {% if cust.city %}, {{ cust.city }}{% endif %}{% if cust.pincode %} - {{ cust.pincode }}{% endif %}
+          </div>
+        </div>
+
+        <!-- Metadata Grid -->
+        <table style="width: 100%; border: none; border-collapse: collapse; font-size: 7pt; margin-top: 2px;">
+          <tr>
+            <td style="border: none; padding: 0.5px 0;"><span class="header-label">Visit Day :</span> {{ cust.visit_day }}</td>
+            <td style="border: none; padding: 0.5px 0;"><span class="header-label">S Code :</span> {{ cust.s_code }}</td>
+            <td style="border: none; padding: 0.5px 0;" class="text-right"><span class="header-label">{{ cust.route }}</span></td>
+          </tr>
+          <tr>
+            <td style="border: none; padding: 0.5px 0;"><span class="header-label">Due Date :</span> {{ cust.due_date }}</td>
+            <td style="border: none; padding: 0.5px 0;" colspan="2"><span class="header-label">Mobile :</span> {{ cust.mobile }}</td>
+          </tr>
+          <tr>
+            <td style="border: none; padding: 0.5px 0;"><span class="header-label">Ph.:</span> {{ cust.phone }}</td>
+            <td style="border: none; padding: 0.5px 0;" colspan="2"><span class="header-label">Area :</span> {{ cust.area }}</td>
+          </tr>
+          <tr>
+            <td style="border: none; padding: 0.5px 0;" colspan="2"><span class="header-label">D.L. No. :</span> {{ cust.dl_no }}</td>
+            <td style="border: none; padding: 0.5px 0;" class="text-right"><span class="header-label">FOOD LIC. :</span> {{ cust.food_lic }}</td>
+          </tr>
+          <tr>
+            <td style="border: none; padding: 0.5px 0;" colspan="3">
+              <span class="header-label">GSTIN:</span> {{ cust.gstin }} &nbsp;
+              <span class="header-label">State :</span> {{ cust.state_full }} &nbsp;
+              <span class="header-label">PAN :</span> {{ cust.pan }} &nbsp;
+              <span class="header-label">NDPS - II :</span> {{ cust.ndps }}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <!-- Items Table (16 Columns) -->
+  <table class="items-table">
+    <thead>
+      <tr>
+        <th style="width: 4.5%;">LOC/<br>ROW</th>
+        <th style="width: 4.5%;">MFR/<br>BY</th>
+        <th style="width: 17.5%; text-align: left; padding-left: 3px;">PRODUCT</th>
+        <th style="width: 4.5%;">PACK</th>
+        <th style="width: 4%;">QTY</th>
+        <th style="width: 6.5%;">SCH%<br>/QTY</th>
+        <th style="width: 9.5%;">BATCH</th>
+        <th style="width: 5.5%;">EXP.<br>DATE</th>
+        <th style="width: 6%;">MRP</th>
+        <th style="width: 6%;">SALE<br>RATE</th>
+        <th style="width: 7%;">PROD.<br>VALUE</th>
+        <th style="width: 4%;">DIS<br>%</th>
+        <th style="width: 7.5%;">HSN<br>CODE</th>
+        <th style="width: 4%;">GST<br>%</th>
+        <th style="width: 5.5%;">GST<br>VAL</th>
+        <th style="width: 7.5%;">NET<br>VALUE</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td class="text-center">{{ item.loc_row }}</td>
+        <td class="text-center font-bold">{{ item.mfac_by }}</td>
+        <td class="text-left font-bold product-col" style="padding-left: 3px;">{{ item.product }}</td>
+        <td class="text-center">{{ item.pack }}</td>
+        <td class="text-right font-bold">{{ item.billed_qty }}</td>
+        <td class="text-center scheme-val">{{ item.scheme }}</td>
+        <td class="text-center">{{ item.batch }}</td>
+        <td class="text-center">{{ item.exp_date }}</td>
+        <td class="text-right font-bold">{{ item.mrp }}</td>
+        <td class="text-right">{{ item.sale_rate }}</td>
+        <td class="text-right">{{ item.product_value }}</td>
+        <td class="text-right">{{ item.disc_percent }}</td>
+        <td class="text-center">{{ item.hsn_code }}</td>
+        <td class="text-center">{{ item.gst_rate }}</td>
+        <td class="text-right">{{ item.gst_value }}</td>
+        <td class="text-right font-bold">{{ item.net_value }}</td>
+      </tr>
+      {% endfor %}
+
+      {# Filler blank rows if fewer than 7 items to keep invoice structure consistent #}
+      {% set remaining_rows = 7 - (items | length) %}
+      {% if remaining_rows > 0 %}
+        {% for _ in range(remaining_rows) %}
+        <tr class="empty-row">
+          <td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        </tr>
+        {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
+
+  <!-- Banners -->
+  <div class="alert-banner complaints-banner">
+    FOR ANY COMPLAINTS PLS INFORM {{ comp.phone }} IN 24 HRS. &amp; PLS COLLECT ORIGINAL BILL WHEN YOU MAKE PAYMENT
+  </div>
+  <div class="alert-banner message-banner">
+    <div class="msg-label">Message</div>
+    <div class="msg-content">*** {{ comp.name | upper }} - ALL PRODUCTS AVAILABLE ***</div>
+  </div>
+
+  <!-- Footer Table -->
+  <table class="footer-table">
+    <tr>
+      <!-- Sub-block 1: Left (Items, Bank Details, Times) -->
+      <td style="width: 30%;">
+        <div style="font-size: 7.2pt; line-height: 1.3;">
+          <span class="header-label">Total Items :</span> &nbsp; <span class="font-bold">{{ totals.total_items }}</span><br>
+          <span class="header-label">Total Qty &nbsp; &nbsp;:</span> &nbsp; <span class="font-bold">{{ totals.total_qty }}</span>
+          {% if totals.total_free_qty > 0 %}
+            <span style="font-size: 6.8pt; color: #333;">({{ totals.total_billed_qty }} + {{ totals.total_free_qty }} Free)</span>
+          {% endif %}
+          <div style="margin-top: 4px; font-size: 6.8pt; border-top: 1px dotted #888; padding-top: 2px;">
+            <span class="header-label">OUR BANK DETAILS:</span><br>
+            {{ bank.bank_name }}, {{ bank.branch }}<br>
+            <span class="header-label">A/C NO.</span> {{ bank.account_no }}<br>
+            <span class="header-label">IFSC CODE:</span> {{ bank.ifsc_code }}
+          </div>
+          <div style="margin-top: 5px; font-size: 6.5pt; color: #444;">
+            Print Time : {{ frappe.utils.now_datetime().strftime('%I:%M%p') }} &nbsp;
+            Chkd By : ______<br>
+            Prep By : {{ (doc.owner or 'ADMIN').split('@')[0] | upper }}
+          </div>
+        </div>
+      </td>
+
+      <!-- Sub-block 2: Center (GST Slab Breakdown) -->
+      <td style="width: 42%;">
+        <table class="gst-slab-table">
+          <thead>
+            <tr>
+              <th style="width: 12%;">GST%</th>
+              <th style="width: 24%;">Taxable<br>Amt.</th>
+              {% if gst.is_inter_state %}
+                <th style="width: 28%;">IGST<br>%</th>
+                <th style="width: 36%;">IGST<br>Amt</th>
+              {% else %}
+                <th style="width: 16%;">SGST<br>%</th>
+                <th style="width: 16%;">SGST<br>Amt</th>
+                <th style="width: 16%;">CGST<br>%</th>
+                <th style="width: 16%;">CGST<br>Amt</th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for slab in gst.slabs %}
+            <tr>
+              <td class="text-center font-bold">{{ slab.rate_label }}</td>
+              <td>{{ "%.2f"|format(slab.taxable) }}</td>
+              {% if gst.is_inter_state %}
+                <td class="text-center">{{ "%.1f"|format(slab.igst_rate) }}%</td>
+                <td>{{ "%.2f"|format(slab.igst_amt) }}</td>
+              {% else %}
+                <td class="text-center">{{ "%.1f"|format(slab.sgst_rate) }}%</td>
+                <td>{{ "%.2f"|format(slab.sgst_amt) }}</td>
+                <td class="text-center">{{ "%.1f"|format(slab.cgst_rate) }}%</td>
+                <td>{{ "%.2f"|format(slab.cgst_amt) }}</td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+            <tr class="total-row">
+              <td class="text-center">Total</td>
+              <td>{{ gst.total_taxable }}</td>
+              {% if gst.is_inter_state %}
+                <td></td>
+                <td>{{ gst.total_igst }}</td>
+              {% else %}
+                <td></td>
+                <td>{{ gst.total_sgst }}</td>
+                <td></td>
+                <td>{{ gst.total_cgst }}</td>
+              {% endif %}
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Ack & E-Waybill info -->
+        <div style="margin-top: 4px; font-size: 6.5pt; color: #444;">
+          ACK NO. : {% if doc.irn %}{{ doc.irn[:20] }}...{% endif %}<br>
+          ACK DT : {{ cust.inv_date }} &nbsp; &nbsp; &nbsp;
+          EWB NO. : {{ doc.ewaybill or '' }}
+        </div>
+      </td>
+
+      <!-- Sub-block 3: Right (Totals, UPI QR, Signatory) -->
+      <td style="width: 28%;">
+        <table class="totals-grid">
+          <tr>
+            <td style="width: 52%;" class="header-label">Gross :</td>
+            <td style="width: 48%;" class="text-right font-bold">{{ totals.gross }}</td>
+          </tr>
+          <tr>
+            <td class="header-label">Sch. Disc :</td>
+            <td class="text-right">{{ totals.sch_disc }}</td>
+          </tr>
+          <tr>
+            <td class="header-label">Disc Amt :</td>
+            <td class="text-right">{{ totals.disc_amt }}</td>
+          </tr>
+          <tr>
+            <td class="header-label">Tax Amt :</td>
+            <td class="text-right">{{ totals.tax_amt }}</td>
+          </tr>
+          <tr>
+            <td class="header-label">TCS % 0.000 :</td>
+            <td class="text-right">{{ totals.tcs_amt }}</td>
+          </tr>
+          <tr style="border-top: 1px solid #aaa;">
+            <td class="header-label font-bold">Grand Total :</td>
+            <td class="text-right font-bold">{{ totals.grand_total }}</td>
+          </tr>
+          <tr>
+            <td class="header-label">Cr No. :</td>
+            <td class="text-right">{{ totals.cr_no }}</td>
+          </tr>
+          <tr>
+            <td class="header-label">Db No. :</td>
+            <td class="text-right">{{ totals.db_no }}</td>
+          </tr>
+          <tr class="to-pay-row">
+            <td style="padding: 2px 0;">To Pay :</td>
+            <td class="text-right" style="padding: 2px 0; font-size: 10pt; font-weight: 900;">{{ totals.to_pay }}</td>
+          </tr>
+        </table>
+
+        <!-- Signatory & UPI QR -->
+        <table style="width: 100%; border: none; border-collapse: collapse; margin-top: 3px;">
+          <tr>
+            {% if qr_image_data %}
+            <td style="width: 42%; border: none; padding: 0; vertical-align: middle; text-align: center;">
+              <div class="qr-box">
+                <img src="{{ qr_image_data }}" alt="UPI QR">
+                <div style="font-size: 6pt; font-weight: bold; color: #333;">Scan to Pay</div>
+              </div>
+            </td>
+            {% endif %}
+            <td style="border: none; padding: 0; vertical-align: bottom; text-align: center;">
+              <div class="signatory-box">
+                <div style="font-size: 7pt; font-weight: bold;">For {{ comp.name }}</div>
+                <div class="signatory-space"></div>
+                <div style="font-size: 7pt; font-weight: bold; border-top: 1px solid #555; display: inline-block; padding-top: 1px;">
+                  Authorised Signatory
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</div>
