@@ -13,9 +13,12 @@ fixtures = [
     },
     {
         "doctype": "Print Format",
-        "filters": [["name", "in", ["StepUp Sales Invoice", "Pharma Distribution Invoice"]]]
+        "filters": [["name", "in", ["StepUp Sales Invoice", "Pharma Distribution Invoice", "Pharma Sales Standard"]]]
     },
-    
+    {
+        "doctype": "Letter Head",
+        "filters": [["name", "in", ["Company Letterhead Report", "Company Letterhead - Grey", "Company Letterhead"]]]
+    },
 ]
 
 doc_events = {
